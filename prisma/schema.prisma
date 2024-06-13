@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CompanyGroup {
+  group_id  Int       @id @default(autoincrement())
+  name      String
+  address   String?
+  city      String?
+  state     String?
+  cnpj      String
+  status    Boolean
+  companies Company[]
+
+  @@map("company_group")
+}
+
+model Company {
+  company_id Int          @id @default(autoincrement())
+  name       String
+  address    String?
+  city       String?
+  state      String?
+  cnpj       String
+  status     Boolean
+  group      CompanyGroup @relation(fields: [group_id], references: [group_id])
+  group_id   Int
+  units      Units[]
+  industries Industries[]
+
+  @@map("company")
+}
+
+model Industries {
+  industry_id Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  status      Boolean
+  company     Company @relation(fields: [company_id], references: [company_id])
+  company_id  Int
+
+  @@map("industries")
+}
+
+model Units {
+  unit_id    Int        @id @default(autoincrement())
+  code       String     @unique
+  name       String
+  status     Boolean
+  company    Company    @relation(fields: [company_id], references: [company_id])
+  company_id Int
+  employees  Employee[]
+
+  @@map("units")
+}
+
+enum Role {
+  ANALITICA
+  DIRECTOR
+  MANAGER
+  OPERATOR
+}
+
+model Employee {
+  employee_id Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  role        Role
+  status      Boolean
+  login       String  @unique
+  password    String
+  unit        Units   @relation(fields: [unit_id], references: [unit_id])
+  unit_id     Int
+
+  @@map("employee")
+}
