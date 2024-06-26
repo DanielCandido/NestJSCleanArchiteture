@@ -17,10 +17,33 @@ export class PrismaEmployeeRepository implements EmployeeRepository {
     }
 
     const data = new Employee();
+    data.id = employee.employee_id;
+    data.login = employee.login;
+    data.name = employee.name;
+    data.role = employee.role;
+    data.status = employee.status;
+    data.password = '';
+
+    return data;
+  }
+
+  async findByUsername(login: string): Promise<Employee | null> {
+    const employee = await this.prisma.employee.findUnique({
+      where: { login },
+    });
+
+    if (!employee) {
+      return null;
+    }
+
+    const data = new Employee();
 
     data.id = employee.employee_id;
     data.login = employee.login;
     data.name = employee.name;
+    data.role = employee.role;
+    data.status = employee.status;
+    data.password = employee.password;
 
     return data;
   }

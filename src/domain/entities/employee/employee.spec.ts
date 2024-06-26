@@ -1,6 +1,6 @@
 import { Employee } from './employee';
 
-describe('User', () => {
+describe('Employee', () => {
   it('should be defined', () => {
     expect(new Employee()).toBeDefined();
   });
